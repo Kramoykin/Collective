@@ -1,0 +1,76 @@
+# importing csv module
+from prettytable import PrettyTable
+import csv
+import openpyxl
+from pandas import DataFrame as df
+from scipy.stats import trim_mean, kurtosis
+from scipy.stats.mstats import mode, gmean, hmean
+from scipy import stats
+import pandas as pd
+import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn import datasets
+iris = datasets.load_iris()
+import joypy
+
+# Creating Excel Writer Object from Pandas
+def expTableToExcel(nameOfTable,NameOfSheet):
+    with pd.ExcelWriter(path_output + NameOfSheet + '.xlsx',
+                        engine='xlsxwriter') as writer:
+        nameOfTable.to_excel(writer, sheet_name=NameOfSheet)
+    return
+
+
+# csv file name
+filename_mat = "student-mat.csv"
+filename_por = "student-por.csv"
+path = ('C:\\Users\\Tanya\\Desktop\\Tpu\\Data analysis\\input data\\CSV\\')
+path_output = ('C:\\Users\\Tanya\\Desktop\\Tpu\\Data analysis\\input data\\CSV\\output\\')
+fields = []
+rows = []
+df = pd.concat(
+    map(pd.read_csv, [path + filename_mat, path + filename_por]), ignore_index=True)
+df.round(1)
+#print(df)
+fields = df.head()
+#print('Number of rows:', len(df))
+dfInfo = (df.info(rows))
+#print(df.info(rows))
+dfDesc = df.describe().round(2)
+#print(df.describe().round(2))
+
+#print(df.value_counts())
+
+#expTableToExcel(df, 'Original_data')
+#expTableToExcel(dfDesc, 'Descriptive_statistics')
+
+# applying groupby() function to
+# group the data on team value.
+gk = df.groupby('subject')
+#print(gk.first())
+dfDescSubj = gk.describe().round(2).transpose()
+#print(dfDescSubj)
+#expTableToExcel(dfDescSubj, 'Subj_Descriptive_statistics')
+# Load Dataset
+# Plot
+#plt.figure(figsize=(10,8), dpi= 80)
+#sns.pairplot(df, kind="scatter", hue="age")
+#plt.show()
+
+
+# Draw Plot
+#plt.figure(figsize=(16,10), dpi= 80)
+#fig, axes = joypy.joyplot(df, column=['age'], by="subject", ylim='own', figsize=(14,10))
+## Decoration
+#plt.title('Age', fontsize=22)
+#plt.show()
+
+plt.style.use('ggplot')
+N = 1000
+df.groupby('subject').\
+age.plot(kind="hist", alpha=0.3, title=('age'))
+plt.legend()
+#plt.show()
+plt.savefig(path_output+'age'+'.png', bbox_inches='tight')
