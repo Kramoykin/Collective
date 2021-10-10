@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-import warnings
+import dexplot as dxp
+#import warnings
 
 # Loading the datasets
 df_mat = pd.read_csv('student-mat.csv')
@@ -13,15 +14,15 @@ df_por = pd.read_csv('student-por.csv')
 
 ## Statistical info
 
-print(df_por.describe())
+#print(df_por.describe())
 
-print(df_mat.describe())
+#print(df_mat.describe())
 
 # Data type of attributes
-#print(df.info())
+#print(df_mat.info())
 
 # Check unique data in dataset
-#print(df.apply(lambda x: len(x.unique())))
+#print(df_mat.apply(lambda x: len(x.unique())))
 
 ## Preprocessing data
 
@@ -41,12 +42,22 @@ for x in df_mat.dtypes.index:
     #print(df[col].value_counts())
     #print()
     
-## Exploratory Analysis
+# Checking for duplicated values
+for item in df_mat.duplicated():
+    if (item == True):
+        print(item)
+        
+for item in df_por.duplicated():
+    if (item == True):
+        print(item)
+        
+## Exploratory Analysis (without normalize)
 
+"""
 # Categorical Attributes Plots
 for col in cat_col:
     name_mat = "./pic/" + str(col) + "_mat" + ".png"
-    name_por = "./pic/" + str(col) + "_mat" + ".png"
+    name_por = "./pic/" + str(col) + "_por" + ".png"
     name_com = "./pic/" + str(col) + "_com" + ".png"
     # Plot mat
     plt.figure(figsize = (5, 5))
@@ -74,7 +85,7 @@ for col in nocat_col:
         or len(df_mat[col].unique()) == 4):
         some_val_col.append(col)
 #print(five_val_col)
-    
+
 # Small Values Attributes Plots
 for col in some_val_col:
     name_mat = "./pic/" + str(col) + "_mat" + ".png"
@@ -100,23 +111,28 @@ mult_val_col = [x for x in nocat_col
                 if x not in some_val_col]
 #print(mult_val_col)
 
+
 # Multiple Values Attributes Plots
 for col in mult_val_col:
     name_mat = "./pic/" + str(col) + "_mat" + ".png"
-    name_por = "./pic/" + str(col) + "_mat" + ".png"
+    name_por = "./pic/" + str(col) + "_por" + ".png"
     name_com = "./pic/" + str(col) + "_com" + ".png"
     # Plot mat
     plt.figure()
-    sns.histplot(df_mat[col], bins = 20)
+    sns.histplot(df_mat[col], bins = 20, color = 'green'\
+                 ).set(ylabel = "counts", title = "Mat")
     plt.savefig(name_mat)
     # Plot por
     plt.figure()
-    sns.histplot(df_por[col], bins = 20)
+    sns.histplot(df_por[col], bins = 20, color = 'yellow'\
+                 ).set(ylabel = "counts", title = "Por")
     plt.savefig(name_por)
     # Plot both
     plt.figure()
-    sns.histplot(df_mat[col], bins = 20)
-    sns.histplot(df_por[col], bins = 20)
+    sns.histplot(df_mat[col], bins = 20, color = 'green'\
+                 ).set(ylabel = "counts", title = "Mat")
+    sns.histplot(df_por[col], bins = 20, color = 'yellow'\
+                 ).set(ylabel = "counts", title = "Mat+Por")
     plt.savefig(name_com)
     
 # Correlation Matrix
@@ -130,3 +146,135 @@ corr_por = df_por.corr()
 plt.figure(figsize = (20, 5))
 sns.heatmap(corr_por, annot = True, cmap = 'coolwarm' )
 plt.savefig("./pic/corr_por.png")
+
+
+## Explanatory analysis (Normalized)
+
+
+# Small Values Attributes Normalized Plots
+for col in some_val_col:
+    # Normalization stuff
+    x_mat = df_mat[col]
+    x_por = df_por[col]
+    per_mat = lambda i: len(i) / (len(x_mat)) 
+    per_por = lambda j: len(j) / (len(x_por))
+    # Plots names
+    name_mat = "./pic/" + str(col) + "_mat_norm" + ".png"
+    name_por = "./pic/" + str(col) + "_por_norm" + ".png"
+    name_com = "./pic/" + str(col) + "_com_norm" + ".png"
+    # Plot mat
+    plt.figure(figsize = (6, 6))
+    sns.barplot(df_por[col], x = x_por, y = x_por\
+                , estimator = per_por).set(ylabel = "percent", title = "Mat")
+    plt.savefig(name_mat)
+    # Plot por
+    plt.figure(figsize = (6, 6))
+    sns.barplot(df_mat[col], x = x_mat, y = x_mat\
+                , estimator = per_mat).set(ylabel = "percent", title = "Por")
+    plt.savefig(name_por)
+    # Plot both
+    plt.figure(figsize = (12, 6))
+    fig, ax = plt.subplots(1,2, sharey = True)
+    sns.barplot(df_mat[col], x = x_mat, y = x_mat, estimator = per_mat\
+                , ax = ax[0]).set(ylabel = "percent", title = "Mat")
+    sns.barplot(df_por[col], x = x_por, y = x_por, estimator = per_por\
+                , ax = ax[1]).set(ylabel = "percent", title = "Por")
+    plt.savefig(name_com)
+
+# Label Encoding
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+for col in cat_col:
+    df_mat[col] = le.fit_transform(df_mat[col])
+    df_por[col] = le.fit_transform(df_por[col])
+
+# Categorical Attributes Normalized Plots
+for col in cat_col:
+    # Normalization stuff
+    x_mat = df_mat[col]
+    x_por = df_por[col]
+    per_mat = lambda i: len(i) / (len(x_mat)) 
+    per_por = lambda j: len(j) / (len(x_por))
+    # Plots names
+    name_mat = "./pic/" + str(col) + "_mat_norm" + ".png"
+    name_por = "./pic/" + str(col) + "_por_norm" + ".png"
+    name_com = "./pic/" + str(col) + "_com_norm" + ".png"
+    # Plot mat
+    plt.figure(figsize = (6, 6))
+    sns.barplot(df_por[col], x = x_por, y = x_por\
+                , estimator = per_por).set(ylabel = "percent", title = "Mat")
+    plt.savefig(name_mat)
+    # Plot por
+    plt.figure(figsize = (6, 6))
+    sns.barplot(df_mat[col], x = x_mat, y = x_mat\
+                , estimator = per_mat).set(ylabel = "percent", title = "Por")
+    plt.savefig(name_por)
+    # Plot both
+    plt.figure(figsize = (12, 6))
+    fig, ax = plt.subplots(1,2, sharey = True)
+    sns.barplot(df_mat[col], x = x_mat, y = x_mat, estimator = per_mat\
+                , ax = ax[0]).set(ylabel = "percent", title = "Mat")
+    sns.barplot(df_por[col], x = x_por, y = x_por, estimator = per_por\
+                , ax = ax[1]).set(ylabel = "percent", title = "Por")
+    plt.savefig(name_com)
+
+# Multiple Values Attributes Plots
+for col in mult_val_col:
+    name_mat = "./pic/" + str(col) + "_mat_norm" + ".png"
+    name_por = "./pic/" + str(col) + "_por_norm" + ".png"
+    name_com = "./pic/" + str(col) + "_com_norm" + ".png"
+    # Plot mat
+    plt.figure()
+    sns.histplot(df_mat[col], bins = 20, color = 'green'\
+                 , stat = 'density').set(ylabel = "frequency", title = "Mat")
+    plt.savefig(name_mat)
+    # Plot por
+    plt.figure()
+    sns.histplot(df_por[col], bins = 20, color = 'yellow'\
+                 , stat = 'density').set(ylabel = "frequency", title = "Por")
+    plt.savefig(name_por)
+    # Plot both
+    plt.figure()
+    sns.histplot(df_mat[col], bins = 20, color = 'green', label = "Mat"\
+                 , stat = 'density').set(ylabel = "frequency", title = "Mat")
+    sns.histplot(df_por[col], bins = 20, color = 'yellow', label = "Por"\
+                 , stat = 'density').set(ylabel = "frequency", title = "Mat+Por")
+    plt.savefig(name_com)
+   
+"""    
+## Merging Dataset
+
+add_por = [int(1)] * len(df_por)
+add_mat = [int(0)] * len(df_mat)
+
+df_por["target"] = add_por
+df_mat["target"] = add_mat
+
+df_common = df_por.append(df_mat)
+print(df_common)
+
+# Outlet analysis
+outlet_por = df_por.loc[df_por["G1"] <= 5.0]
+outlet_mat = df_mat.loc[df_mat["G1"] <= 5.0]
+#print(outlet_por)
+#print(outlet_mat)
+# Output the outlet rows to xls files 
+outlet_por.to_csv('outlet_por.xls', index = None)
+outlet_mat.to_csv('outlet_mat.xls', index = None)
+#print(df_por.compare(df_mat, keep_shape=True))
+
+# Searching for equal rows
+
+df_mat_copy = df_mat
+df_por_copy = df_por
+
+for df in [df_mat_copy, df_por_copy]:
+    del df["G1"]
+    del df["G2"]
+    del df["G3"]
+    del df["target"]
+    del df["paid"]
+
+merged_df = df_mat_copy.merge(df_por_copy, how = 'inner')
+print(merged_df)
+
