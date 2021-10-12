@@ -50,29 +50,8 @@ for item in df_mat.duplicated():
 for item in df_por.duplicated():
     if (item == True):
         print(item)
-        
-## Exploratory Analysis (without normalize)
-
-"""
-# Categorical Attributes Plots
-for col in cat_col:
-    name_mat = "./pic/" + str(col) + "_mat" + ".png"
-    name_por = "./pic/" + str(col) + "_por" + ".png"
-    name_com = "./pic/" + str(col) + "_com" + ".png"
-    # Plot mat
-    plt.figure(figsize = (5, 5))
-    sns.countplot(df_mat[col])
-    plt.savefig(name_mat)
-    # Plot por
-    plt.figure(figsize = (5, 5))
-    sns.countplot(df_por[col])
-    plt.savefig(name_por)
-    # Plot both
-    plt.figure(figsize = (5, 5))
-    fig, ax = plt.subplots(1,2, sharey = True)
-    sns.countplot(df_mat[col], ax = ax[0]).set(title = "Mat")
-    sns.countplot(df_por[col], ax = ax[1]).set(title = "Por")
-    plt.savefig(name_com)
+   
+## Dividing Attributes
 
 # Not categorical columns    
 nocat_col = [x for x in df_mat if x not in cat_col]
@@ -84,7 +63,32 @@ for col in nocat_col:
     if (len(df_mat[col].unique()) == 5
         or len(df_mat[col].unique()) == 4):
         some_val_col.append(col)
-#print(five_val_col)
+
+# Attributes with multiple values
+mult_val_col = [x for x in nocat_col 
+                if x not in some_val_col]        
+   
+## Exploratory Analysis (without normalize)
+
+# Categorical Attributes Plots
+for col in cat_col:
+    name_mat = "./pic/" + str(col) + "_mat" + ".png"
+    name_por = "./pic/" + str(col) + "_por" + ".png"
+    name_com = "./pic/" + str(col) + "_com" + ".png"
+    # Plot mat
+    plt.figure(figsize = (5, 5))
+    sns.countplot(df_mat[col]).set(title = "Mat")
+    plt.savefig(name_mat)
+    # Plot por
+    plt.figure(figsize = (5, 5))
+    sns.countplot(df_por[col]).set(title = "Por")
+    plt.savefig(name_por)
+    # Plot both
+    plt.figure(figsize = (5, 5))
+    fig, ax = plt.subplots(1,2, sharey = True)
+    sns.countplot(df_mat[col], ax = ax[0]).set(title = "Mat")
+    sns.countplot(df_por[col], ax = ax[1]).set(title = "Por")
+    plt.savefig(name_com)
 
 # Small Values Attributes Plots
 for col in some_val_col:
@@ -93,11 +97,11 @@ for col in some_val_col:
     name_com = "./pic/" + str(col) + "_com" + ".png"
     # Plot mat
     plt.figure(figsize = (5, 5))
-    sns.countplot(df_mat[col])
+    sns.countplot(df_mat[col]).set(title = "Mat")
     plt.savefig(name_mat)
     # Plot por
     plt.figure(figsize = (5, 5))
-    sns.countplot(df_por[col])
+    sns.countplot(df_por[col]).set(title = "Por")
     plt.savefig(name_por)
     # Plot both
     plt.figure(figsize = (5, 5))
@@ -106,12 +110,6 @@ for col in some_val_col:
     sns.countplot(df_por[col], ax = ax[1]).set(title = "Por")
     plt.savefig(name_com)
 
-# Attributes with multiple values
-mult_val_col = [x for x in nocat_col 
-                if x not in some_val_col]
-#print(mult_val_col)
-
-
 # Multiple Values Attributes Plots
 for col in mult_val_col:
     name_mat = "./pic/" + str(col) + "_mat" + ".png"
@@ -119,20 +117,22 @@ for col in mult_val_col:
     name_com = "./pic/" + str(col) + "_com" + ".png"
     # Plot mat
     plt.figure()
-    sns.histplot(df_mat[col], bins = 20, color = 'green'\
+    sns.histplot(df_mat[col], bins = 20, color = 'deeppink', alpha = 0.5\
                  ).set(ylabel = "counts", title = "Mat")
     plt.savefig(name_mat)
     # Plot por
     plt.figure()
-    sns.histplot(df_por[col], bins = 20, color = 'yellow'\
+    sns.histplot(df_por[col], bins = 20, color = 'lightseagreen', alpha = 0.5\
                  ).set(ylabel = "counts", title = "Por")
     plt.savefig(name_por)
     # Plot both
-    plt.figure()
-    sns.histplot(df_mat[col], bins = 20, color = 'green'\
+    fig, axes = plt.subplots(1, 1)
+    axes.set_title("Mat + Port")
+    sns.histplot(df_mat[col], bins = 20, color = 'deeppink', alpha = 0.5\
                  ).set(ylabel = "counts", title = "Mat")
-    sns.histplot(df_por[col], bins = 20, color = 'yellow'\
+    sns.histplot(df_por[col], bins = 20, color = 'lightseagreen', alpha = 0.5\
                  ).set(ylabel = "counts", title = "Mat+Por")
+    axes.legend(['Mat', 'Port'])
     plt.savefig(name_com)
     
 # Correlation Matrix
@@ -147,9 +147,14 @@ plt.figure(figsize = (20, 5))
 sns.heatmap(corr_por, annot = True, cmap = 'coolwarm' )
 plt.savefig("./pic/corr_por.png")
 
-
 ## Explanatory analysis (Normalized)
 
+## Label Encoding
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+for col in cat_col:
+    df_mat[col] = le.fit_transform(df_mat[col])
+    df_por[col] = le.fit_transform(df_por[col])
 
 # Small Values Attributes Normalized Plots
 for col in some_val_col:
@@ -181,13 +186,6 @@ for col in some_val_col:
                 , ax = ax[1]).set(ylabel = "percent", title = "Por")
     plt.savefig(name_com)
 
-# Label Encoding
-from sklearn.preprocessing import LabelEncoder
-le = LabelEncoder()
-for col in cat_col:
-    df_mat[col] = le.fit_transform(df_mat[col])
-    df_por[col] = le.fit_transform(df_por[col])
-
 # Categorical Attributes Normalized Plots
 for col in cat_col:
     # Normalization stuff
@@ -218,30 +216,31 @@ for col in cat_col:
                 , ax = ax[1]).set(ylabel = "percent", title = "Por")
     plt.savefig(name_com)
 
-# Multiple Values Attributes Plots
+# Multiple Values Attributes Normalized Plots
 for col in mult_val_col:
     name_mat = "./pic/" + str(col) + "_mat_norm" + ".png"
     name_por = "./pic/" + str(col) + "_por_norm" + ".png"
     name_com = "./pic/" + str(col) + "_com_norm" + ".png"
     # Plot mat
     plt.figure()
-    sns.histplot(df_mat[col], bins = 20, color = 'green'\
+    sns.histplot(df_mat[col], bins = 20, color = 'deeppink', alpha = 0.5\
                  , stat = 'density').set(ylabel = "frequency", title = "Mat")
     plt.savefig(name_mat)
     # Plot por
     plt.figure()
-    sns.histplot(df_por[col], bins = 20, color = 'yellow'\
+    sns.histplot(df_por[col], bins = 20, color = 'lightseagreen', alpha = 0.5\
                  , stat = 'density').set(ylabel = "frequency", title = "Por")
     plt.savefig(name_por)
     # Plot both
-    plt.figure()
-    sns.histplot(df_mat[col], bins = 20, color = 'green', label = "Mat"\
-                 , stat = 'density').set(ylabel = "frequency", title = "Mat")
-    sns.histplot(df_por[col], bins = 20, color = 'yellow', label = "Por"\
-                 , stat = 'density').set(ylabel = "frequency", title = "Mat+Por")
+    fig, axes = plt.subplots(1, 1)
+    axes.set_title("Mat + Port")
+    sns.histplot(df_mat[col], bins = 20, color = 'deeppink', label = "Mat"\
+                 , stat = 'density', alpha = 0.5).set(ylabel = "frequency")
+    sns.histplot(df_por[col], bins = 20, color = 'lightseagreen', label = "Por"\
+                 , stat = 'density', alpha = 0.5).set(ylabel = "frequency")
+    axes.legend(['Mat', 'Port'])
     plt.savefig(name_com)
    
-"""    
 ## Merging Dataset
 
 add_por = [int(1)] * len(df_por)
@@ -254,8 +253,8 @@ df_common = df_por.append(df_mat)
 print(df_common)
 
 # Outlet analysis
-outlet_por = df_por.loc[df_por["G1"] <= 5.0]
-outlet_mat = df_mat.loc[df_mat["G1"] <= 5.0]
+outlet_por = df_por.loc[df_por["G3"] <= 5.0]
+outlet_mat = df_mat.loc[df_mat["G3"] <= 5.0]
 #print(outlet_por)
 #print(outlet_mat)
 # Output the outlet rows to xls files 
@@ -277,4 +276,6 @@ for df in [df_mat_copy, df_por_copy]:
 
 merged_df = df_mat_copy.merge(df_por_copy, how = 'inner')
 print(merged_df)
+
+
 
