@@ -128,7 +128,9 @@ app.layout = html.Div([
 @app.callback(Output("dist-plot", "figure"), [Input('xaxis-dist', "value"),
                                               ])
 def make_figure(x):
-    return px.histogram(df, x=df_merged[x], color="subject",barmode="overlay",
+    if x is None:
+        return dash.no_update
+    return px.histogram(df, x=df_merged[x], histnorm='probability',color="subject",barmode="overlay",
                         hover_data=df_merged.columns,
                         ).update_xaxes(showgrid=True, title=x, autorange=True,
                                        categoryorder='total ascending'
