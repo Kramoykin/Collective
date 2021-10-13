@@ -67,7 +67,8 @@ for col in nocat_col:
 # Attributes with multiple values
 mult_val_col = [x for x in nocat_col 
                 if x not in some_val_col]        
-   
+
+"""   
 ## Exploratory Analysis (without normalize)
 
 # Categorical Attributes Plots
@@ -112,6 +113,10 @@ for col in some_val_col:
 
 # Multiple Values Attributes Plots
 for col in mult_val_col:
+    if col == "absences":
+        binWidth = 2
+    else:
+        binWidth = 1
     name_mat = "./pic/" + str(col) + "_mat" + ".png"
     name_por = "./pic/" + str(col) + "_por" + ".png"
     name_com = "./pic/" + str(col) + "_com" + ".png"
@@ -128,9 +133,9 @@ for col in mult_val_col:
     # Plot both
     fig, axes = plt.subplots(1, 1)
     axes.set_title("Mat + Port")
-    sns.histplot(df_mat[col], bins = 20, color = 'deeppink', alpha = 0.5\
+    sns.histplot(df_mat[col], color = 'deeppink', alpha = 0.5, binwidth = binWidth\
                  ).set(ylabel = "counts", title = "Mat")
-    sns.histplot(df_por[col], bins = 20, color = 'lightseagreen', alpha = 0.5\
+    sns.histplot(df_por[col], color = 'lightseagreen', alpha = 0.5, binwidth = binWidth\
                  ).set(ylabel = "counts", title = "Mat+Por")
     axes.legend(['Mat', 'Port'])
     plt.savefig(name_com)
@@ -218,17 +223,21 @@ for col in cat_col:
 
 # Multiple Values Attributes Normalized Plots
 for col in mult_val_col:
+    if col == "absences":
+        binWidth = 2
+    else:
+        binWidth = 1
     name_mat = "./pic/" + str(col) + "_mat_norm" + ".png"
     name_por = "./pic/" + str(col) + "_por_norm" + ".png"
     name_com = "./pic/" + str(col) + "_com_norm" + ".png"
     # Plot mat
     plt.figure()
-    sns.histplot(df_mat[col], bins = 20, color = 'deeppink', alpha = 0.5\
+    sns.histplot(df_mat[col], binwidth = binWidth, color = 'deeppink', alpha = 0.5\
                  , stat = 'density').set(ylabel = "frequency", title = "Mat")
     plt.savefig(name_mat)
     # Plot por
     plt.figure()
-    sns.histplot(df_por[col], bins = 20, color = 'lightseagreen', alpha = 0.5\
+    sns.histplot(df_por[col], binwidth = binWidth, color = 'lightseagreen', alpha = 0.5\
                  , stat = 'density').set(ylabel = "frequency", title = "Por")
     plt.savefig(name_por)
     # Plot both
@@ -240,42 +249,71 @@ for col in mult_val_col:
                  , stat = 'density', alpha = 0.5).set(ylabel = "frequency")
     axes.legend(['Mat', 'Port'])
     plt.savefig(name_com)
-   
+"""
+
+  
 ## Merging Dataset
 
+
+# Add indexes
+df_por['ID'] = np.arange(df_por.shape[0])
+print(df_por)
+
+# Add target attribute
 add_por = [int(1)] * len(df_por)
 add_mat = [int(0)] * len(df_mat)
+df_por["is_por"] = add_por
+df_mat["is_por"] = add_mat
 
-df_por["target"] = add_por
-df_mat["target"] = add_mat
+# Output mat df to csv
+df_mat.to_csv('mat_new.csv', index = None)
 
-df_common = df_por.append(df_mat)
-print(df_common)
+# Output por df to csv
+df_por.to_csv('por_noized.csv', index = None)
+
+# Output merged df to csv without removing duplicates
+df_common_noized = df_por.append(df_mat)
+df_common_noized.to_csv('common_noized.csv', index = None)
 
 # Outlet analysis
-outlet_por = df_por.loc[df_por["G3"] <= 5.0]
-outlet_mat = df_mat.loc[df_mat["G3"] <= 5.0]
+#outlet_por = df_por.loc[df_por["G3"] <= 5.0]
+#outlet_mat = df_mat.loc[df_mat["G3"] <= 5.0]
 #print(outlet_por)
 #print(outlet_mat)
 # Output the outlet rows to xls files 
-outlet_por.to_csv('outlet_por.xls', index = None)
-outlet_mat.to_csv('outlet_mat.xls', index = None)
+#outlet_por.to_csv('outlet_por.xls', index = None)
+#outlet_mat.to_csv('outlet_mat.xls', index = None)
 #print(df_por.compare(df_mat, keep_shape=True))
 
-# Searching for equal rows
+## Searching for equal rows
 
-df_mat_copy = df_mat
-df_por_copy = df_por
+# Create copies for dropping course individual columns
+df_mat_copy = df_mat.copy()
+df_por_copy = df_por.copy()
 
+
+# Delete course individual columns
 for df in [df_mat_copy, df_por_copy]:
     del df["G1"]
     del df["G2"]
     del df["G3"]
-    del df["target"]
+    del df["is_por"]
     del df["paid"]
 
+# Get ID of duplicated columns
 merged_df = df_mat_copy.merge(df_por_copy, how = 'inner')
-print(merged_df)
+del_rows = merged_df['ID']
 
+# Drop duplicated columns from Portuguese
+df_por.drop(del_rows, inplace = True)
+
+# Output clear Portuguese df
+df_por.to_csv('por_clear.csv', index = None)
+
+# Combine two datasets and output clear common df 
+df_por.drop(columns = ['ID'], inplace = True)
+df_por.to_csv('por_clear.csv', index = None)
+df_common_clear = df_por.append(df_mat)
+df_common_clear.to_csv('common_clear.csv', index = None)
 
 
