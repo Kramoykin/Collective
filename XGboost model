@@ -1,0 +1,88 @@
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+import xgboost as xgb
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+import shap
+# split a dataset into train and test sets
+from sklearn.datasets import make_blobs
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris
+from sklearn.datasets import load_digits
+from sklearn.metrics import accuracy_score
+
+file_general_clear='common_clear.csv'
+path = ('C:\\Users\\Tanya\\Desktop\\Tpu\\Data analysis\\input data\\CSV\\model\\')
+df = pd.read_csv(path+file_general_clear)
+#change target value to binary
+df['G3'] = np.where(df['G3'] > 8, 1, 0)
+#pandas split dataframe to train and test
+from sklearn.model_selection import train_test_split
+y = df.G3
+X = df.drop(['G3'],axis=1)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                                    train_size=0.7,
+                                                    random_state=42,
+                                                    stratify=y)
+target = y_train
+data = X_train
+encoder = LabelEncoder()
+categorical = data.dtypes[data.dtypes=="object"].index.tolist()
+data[categorical] = data[categorical].apply(encoder.fit_transform)
+dtrain = xgb.DMatrix(data, target)
+
+params = {
+    "eta": 0.01,
+    "objective": "binary:logistic",
+    "subsample": 0.5,
+    "eval_metric": "auc",
+
+}
+model = xgb.train(
+    params,
+    dtrain,
+    num_boost_round=5000,
+    verbose_eval=500
+)
+'''
+fig, ax = plt.subplots(1, 1, figsize=(10, 8))
+xgb.plot_importance(model, ax=ax)
+plt.title("xgboost.plot_importance(model, importance_type='weight')")
+#plt.show()
+
+fig, ax = plt.subplots(2, 1, figsize=(10, 18))
+#xgb.plot_importance(model, ax=ax[0], importance_type="cover")
+ax[0].set_title("xgboost.plot_importance(model, importance_type='cover')")
+
+xgb.plot_importance(model, ax=ax[1], importance_type="gain")
+ax[1].set_title("xgboost.plot_importance(model, importance_type='gain')")
+#plt.show()
+
+explainer = shap.TreeExplainer(model)
+shap_values = explainer.shap_values(data, target)
+shap.force_plot(
+    explainer.expected_value, shap_values[0,:], data.iloc[0,:], link="logit"
+)
+shap.summary_plot(shap_values, data, plot_type="bar", max_display=data.shape[1])
+
+shap.summary_plot(shap_values, data)
+
+dependence_features = data.columns
+
+#for name in dependence_features:
+#    shap.dependence_plot(name, shap_values, data, display_features=data)
+'''
+#test data in the model
+
+target = y_test
+data = X_test
+encoder = LabelEncoder()
+categorical = data.dtypes[data.dtypes=="object"].index.tolist()
+data[categorical] = data[categorical].apply(encoder.fit_transform)
+dtest = xgb.DMatrix(data, target)
+output=model.predict(dtest).astype('float32')
+predictions = [round(value) for value in output]
+accuracy = accuracy_score(y_test, predictions)
+print("Accuracy: %.2f%%" % (accuracy * 100.0))
