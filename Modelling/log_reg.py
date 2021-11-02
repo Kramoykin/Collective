@@ -11,6 +11,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import log_loss
 import warnings
+import shap
 warnings.filterwarnings('ignore')
 
 def get_cat(df):
@@ -156,8 +157,9 @@ new_df_com = pd.get_dummies(df_com, columns = cat_rows)
 
 # Check where the border between good and bad students placed 
 #(<=9 - bad, >9 - good)
-plt.figure()
-sns.countplot(new_df_com.loc[new_df_com['G3'] <= 9.0]['G3'])
+fig, ax = plt.subplots(1,2, sharey = True)
+sns.countplot(new_df_com.loc[new_df_com['G3'] <= 9.0]['G3'], ax = ax[0])
+sns.countplot(new_df_com.loc[new_df_com['G3'] > 9.0]['G3'], ax = ax[1])
 
 # Transform target variable to binary variable
 new_df_com = make_tar_bin(new_df_com, 9)
@@ -167,6 +169,7 @@ new_df_com = make_tar_bin(new_df_com, 9)
 # Get the feature importance
 df_fi = get_fi(new_df_com, 'G3')
 features = df_fi['Feature'].values
+print(features)
 
 """--------------SPLITTING THE DATA----------------"""
 
@@ -191,6 +194,12 @@ X_train, X_valid, y_train, y_valid = train_test_split(X_train
                                                        , random_state = 13
                                                        )
 
+# G3 distribution in validation sample plot
+# plt.figure()
+# sns.histplot(y_valid, bins = 20, color = 'deeppink'\
+#               , label = "G3 distr for both groups"\
+#               , alpha = 0.5).set(ylabel = "frequency")
+
 """--------------HYPER PARAMETER TUNING----------------"""
 # Get the sorted C-values dataframe
 c_df = get_best_C(X_train, y_train, X_test, y_test)
@@ -198,7 +207,6 @@ c_df = get_best_C(X_train, y_train, X_test, y_test)
 c = c_df['C_value'][0]
 
 """--------------TEST TUNED MODEL ON UNSEEN DATA----------------"""
-
 # Initialaze the model
 log_reg = LogisticRegression(random_state = 13, solver = 'lbfgs', C = c)
 # Fit the regression curve
@@ -217,10 +225,15 @@ print("\nFeature coefficients : \n", feature_coeffs)
 print(classification_report(y_valid, y_pred_valid))
 # Accuracy on Valid
 print("\nThe Model validation accuracy is : ", log_reg.score(X_valid, y_valid))
-# Logarithmic Loss
+# Logarithmic Loss on Valid
 print("\nThe Model Log Loss of Validating :", log_loss(y_valid, pred_proba_valid))
 
 
+"""-----------------------SHAP-----------------------------"""
+explainer = shap.LinearExplainer(log_reg, X_train, feature_dependence="independent")
+shap_values = explainer.shap_values(X_test)
+plt.figure()
+shap.summary_plot(shap_values, X_test, features)
 """--------------EXPLORING TRAINING RESULTS----------------"""
 
 # Confusion Matrix
