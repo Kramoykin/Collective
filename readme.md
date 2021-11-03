@@ -18,10 +18,12 @@ The dataset was explored for future investigation by using **_Pandas_** function
 There are some differences in representation of each group attributes distibutions. Due to the different amount of students in Math course and Portuguese courses histograms were normalized on the amount of students to be compared easier. As example you can see below normalized **_seaborn_** countplots of daily alcohol consumption (Dalc) and weekend alcohol consumption (Walc).
 </p>
 
+<p align="center">
 Daily consumption distribution             |  Weekend consumption distribution 
 :-------------------------:|:-------------------------:
 ![image](https://user-images.githubusercontent.com/63719570/140008238-e6d5d509-d0bf-46c5-8211-48f618ef6657.png)  |  ![image](https://user-images.githubusercontent.com/63719570/140008191-730afa96-e9aa-4f58-9d3f-c3ffcda78fb2.png)
-
+</p>
+  
 <p align="justify">
 For continuous variables exists **_seaborn_** distplots like following normalized distribution of the final grade:
 </p>
