@@ -7,7 +7,7 @@ The goal of this work is to go through such data analysis steps as **data prepar
 
 ## Data preparation and descriptive analysis
 <p align="justify">
-The dataset was explored for future investigation by using **_Pandas_** functional. It were founded that existing dataset is pretty clear and does not contain NaN or Null values. For the plotting process optimization attributes were divided in three groups:
+The dataset was explored for future investigation by using **Pandas** functional. It were founded that existing dataset is pretty clear and does not contain NaN or Null values. For the plotting process optimization attributes were divided in three groups:
 </p>
 
 * categorical; 
@@ -18,16 +18,14 @@ The dataset was explored for future investigation by using **_Pandas_** function
 There are some differences in representation of each group attributes distibutions. Due to the different amount of students in Math course and Portuguese courses histograms were normalized on the amount of students to be compared easier. As example you can see below normalized **_seaborn_** countplots of daily alcohol consumption (Dalc) and weekend alcohol consumption (Walc).
 </p>
 
-<p align="center">
-  
+<center> 
 Daily consumption distribution             |  Weekend consumption distribution 
 :-------------------------:|:-------------------------:
 ![image](https://user-images.githubusercontent.com/63719570/140008238-e6d5d509-d0bf-46c5-8211-48f618ef6657.png)  |  ![image](https://user-images.githubusercontent.com/63719570/140008191-730afa96-e9aa-4f58-9d3f-c3ffcda78fb2.png)
-
-</p>
+</center>
   
 <p align="justify">
-For continuous variables exists **_seaborn_** distplots like following normalized distribution of the final grade:
+For continuous variables exists **seaborn** distplots like following normalized distribution of the final grade:
 </p>
 
 <p align="center">
@@ -53,11 +51,11 @@ For the following analysis both Math and Portuguese datasets were merged with re
 </p>
 
 <p align="justify">
-you can clearly notice the distinct border between G3 = 9 and G3 = 10. It was decided to call all students with G3 less or equal -- 9 'bad', and with G3 greater than 9 -- 'good'. 
+you can clearly notice the distinct border between G3 = 9 and G3 = 10. It was decided to call all students with G3 less or equal – 9 'bad', and with G3 greater than 9 – 'good'. 
 
-Categorical variables were transformed to the binary format and it was explored the feature importance of all attributes by using **_sklearn.DecisionTreeClassifier_**. Features with zero importance were removed from dataset. The dataset was randomly splitted into train, test and validation samples.  Train and test samples were used for Hyperparameter Tuning -- iterative applying the **_sklearn.LogisticRegression_** model with different values of C-parameter to get the best one value by calculating accuracy of the model and logarithmic loss. 
+Categorical variables were transformed to the binary format and it was explored the feature importance of all attributes by using **sklearn.DecisionTreeClassifier**. Features with zero importance were removed from dataset. The dataset was randomly splitted into train, test and validation samples.  Train and test samples were used for Hyperparameter Tuning -- iterative applying the **sklearn.LogisticRegression** model with different values of C-parameter to get the best one value by calculating accuracy of the model and logarithmic loss. 
 
-Finally the **_sklearn.LogisticRegression_** model with the best value of C-parameter was used on the validation sample. Calculated accuracy is 0.92 and logarithmic loss is 0.19. Results of the prediction are shown in confusion matrix:
+Finally the **sklearn.LogisticRegression** model with the best value of C-parameter was used on the validation sample. Calculated accuracy is 0.92 and logarithmic loss is 0.19. Results of the prediction are shown in confusion matrix:
 </p>
 
 <p align="center">
