@@ -7,7 +7,8 @@ The goal of this work is to go through such data analysis steps as **data prepar
 
 ## Data preparation and descriptive analysis
 <p align="justify">
-The dataset was explored for future investigation by using **Pandas** functional. It were founded that existing dataset is pretty clear and does not contain NaN or Null values. For the plotting process optimization attributes were divided in three groups:
+  
+The dataset was explored for future investigation by using __Pandas__ functional. It were founded that existing dataset is pretty clear and does not contain NaN or Null values. For the plotting process optimization attributes were divided in three groups:
 </p>
 
 * categorical; 
@@ -15,6 +16,7 @@ The dataset was explored for future investigation by using **Pandas** functional
 * continuous.
 
 <p align="justify">
+  
 There are some differences in representation of each group attributes distibutions. Due to the different amount of students in Math course and Portuguese courses histograms were normalized on the amount of students to be compared easier. As example you can see below normalized __seaborn__ countplots of daily alcohol consumption (Dalc) and weekend alcohol consumption (Walc).
 </p>
 
@@ -28,6 +30,7 @@ Daily consumption distribution             |  Weekend consumption distribution
 </div>
   
 <p align="justify">
+  
 For continuous variables exists **seaborn** distplots like following normalized distribution of the final grade:
 </p>
 
