@@ -71,17 +71,26 @@ Also it was used some **_SHAP_** functional for describing the resulting feature
 </p>
 
 ## Useful Links:
-<pre>
 **Dataset** : 
+
 https://www.kaggle.com/uciml/student-alcohol-consumption
+
 **Data handling**
+
 https://pandas.pydata.org/
+
 https://numpy.org/
+
 **Plotting** :
+
 https://matplotlib.org/
+
 https://seaborn.pydata.org/
+
 **Machine learning** :
+
 https://scikit-learn.org/stable/
+
 **Explaining model results** :
+
 https://shap.readthedocs.io/en/latest/index.html
-</pre>
