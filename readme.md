@@ -15,7 +15,7 @@ The dataset was explored for future investigation by using **Pandas** functional
 * continuous.
 
 <p align="justify">
-There are some differences in representation of each group attributes distibutions. Due to the different amount of students in Math course and Portuguese courses histograms were normalized on the amount of students to be compared easier. As example you can see below normalized **seaborn** countplots of daily alcohol consumption (Dalc) and weekend alcohol consumption (Walc).
+There are some differences in representation of each group attributes distibutions. Due to the different amount of students in Math course and Portuguese courses histograms were normalized on the amount of students to be compared easier. As example you can see below normalized __seaborn__ countplots of daily alcohol consumption (Dalc) and weekend alcohol consumption (Walc).
 </p>
 
 <div align="center">
@@ -66,9 +66,10 @@ Finally the **sklearn.LogisticRegression** model with the best value of C-parame
 </p>
 
 <p align="justify">
-With the aim of verifying the model there was used **sklearn.DummyClassifier** which results of accuracy is 0.71 and of logarithmic loss is 9.87 are much worse.
+  
+With the aim of verifying the model there was used __sklearn.DummyClassifier__ which results of accuracy is 0.71 and of logarithmic loss is 9.87 are much worse.
 
-Also it was used some **_SHAP_** functional for describing the resulting feature importance of used attributes:
+Also it was used some **SHAP** functional for describing the resulting feature importance of used attributes:
 </p>
 
 <p align="center">
