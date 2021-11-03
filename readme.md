@@ -1,4 +1,4 @@
-# Data Analysis -- student alcohol consumption dataset exploration
+# Data Analysis – student alcohol consumption dataset exploration
 <p align="justify">
 This is the repo of Tomsk Politechnic University students course work on the field of data analysis. The [chosen dataset](https://www.kaggle.com/uciml/student-alcohol-consumption) contains a survey of students math and portuguese language courses in secondary school: lot of interesting social, gender and study information about students. 
 
@@ -71,6 +71,7 @@ Also it was used some **_SHAP_** functional for describing the resulting feature
 </p>
 
 ## Useful Links:
+<pre>
 **Dataset** : 
 https://www.kaggle.com/uciml/student-alcohol-consumption
 **Data handling**
@@ -83,3 +84,4 @@ https://seaborn.pydata.org/
 https://scikit-learn.org/stable/
 **Explaining model results** :
 https://shap.readthedocs.io/en/latest/index.html
+</pre>
