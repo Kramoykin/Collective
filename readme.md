@@ -1,5 +1,6 @@
 # Data Analysis – student alcohol consumption dataset exploration
 <p align="justify">
+  
 This is the repo of Tomsk Politechnic University students course work on the field of data analysis. The [chosen dataset](https://www.kaggle.com/uciml/student-alcohol-consumption) contains a survey of students math and portuguese language courses in secondary school: lot of interesting social, gender and study information about students. 
 
 The goal of this work is to go through such data analysis steps as **data preparation**, **descriptive** and **explanatory** statistics and finally -- **predictive analysis** with using several predive models. 
