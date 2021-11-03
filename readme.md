@@ -19,9 +19,11 @@ There are some differences in representation of each group attributes distibutio
 </p>
 
 <p align="center">
+  
 Daily consumption distribution             |  Weekend consumption distribution 
 :-------------------------:|:-------------------------:
 ![image](https://user-images.githubusercontent.com/63719570/140008238-e6d5d509-d0bf-46c5-8211-48f618ef6657.png)  |  ![image](https://user-images.githubusercontent.com/63719570/140008191-730afa96-e9aa-4f58-9d3f-c3ffcda78fb2.png)
+
 </p>
   
 <p align="justify">
