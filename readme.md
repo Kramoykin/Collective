@@ -66,7 +66,7 @@ Finally the **sklearn.LogisticRegression** model with the best value of C-parame
 </p>
 
 <p align="justify">
-With the aim of verifying the model there was used **_sklearn.DummyClassifier_** which results of accuracy is 0.71 and of logarithmic loss is 9.87 are much worse.
+With the aim of verifying the model there was used **sklearn.DummyClassifier** which results of accuracy is 0.71 and of logarithmic loss is 9.87 are much worse.
 
 Also it was used some **_SHAP_** functional for describing the resulting feature importance of used attributes:
 </p>
