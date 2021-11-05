@@ -1,0 +1,145 @@
+#to build graphs i'll use plotly
+import plotly.graph_objects as go # or plotly.express as px
+from plotnine.data import columns
+
+fig = go.Figure() # or any Plotly Express function e.g. px.bar(...)
+# fig.add_trace( ... )
+# fig.update_layout( ... )
+from prettytable import PrettyTable
+#to use app dash in browser for visualisaton
+import dash
+from dash import dcc
+from dash import html
+from dash.dependencies import Input, Output
+import plotly.express as px
+import pandas as pd
+import pandas as pd
+import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotnine
+from sklearn import datasets
+iris = datasets.load_iris()
+import joypy
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OrdinalEncoder
+import flask
+
+
+# Creating Excel Writer Object from Pandas
+def expTableToExcel(nameOfTable,NameOfSheet):
+    with pd.ExcelWriter(path_output + NameOfSheet + '.xlsx',
+                        engine='xlsxwriter') as writer:
+        nameOfTable.to_excel(writer, sheet_name=NameOfSheet)
+    return
+
+# export csv file name
+filename_mat = "student-mat.csv"
+filename_por = "student-por.csv"
+path = ('C:\\Users\\Tanya\\Desktop\\Tpu\\Data analysis\\input data\\CSV\\')
+path_output = ('C:\\Users\\Tanya\\Desktop\\Tpu\\Data analysis\\input data\\CSV\\output\\')
+fields = []
+catfields = []
+numfields = []
+rows = []
+catrows = []
+numrows = []
+
+#concat two files
+df = pd.concat(
+    map(pd.read_csv, [path + filename_mat, path + filename_por]), ignore_index=True)
+
+#create table of num and cat
+##dfInfo = (df.info(rows))
+##print(df.info(rows))
+
+#defined field names
+for col in df.columns:
+    fields.append(col)
+
+#split numerical and categorical
+num_data = df.select_dtypes(include=[np.number],exclude=['object']).copy()
+cat_data = df.select_dtypes(include=['object'],exclude=[np.number]).copy()
+num_data.shape[1]
+cat_data.shape[1]
+
+
+#export combined dataset to excel
+##expTableToExcel(df, 'Original_data')
+
+#export desc stats for numeric values dataset to excel
+dfDescNum = num_data.describe().round(2)
+##expTableToExcel(dfDescNum, 'DescStatsNumerical')
+
+#export desc stats for categorical values dataset to excel
+dfDescCat = cat_data.describe().round(2).transpose()
+##expTableToExcel(dfDescCat, 'DescStatsCategorical')
+
+#check null values
+##print(num_data.isnull().values.sum())
+##print(cat_data.isnull().values.sum())
+
+#define num of rows
+numOfRowsDF = len(df)
+#print('Number of rows:', len(df))
+
+#encode categorical values
+# create dictionary of ordinal to integer mapping
+#defined field names
+cat_dataReplace = cat_data.copy()
+replace_map_comp_dict={}
+for col in cat_data.columns:
+    catfields.append(col)
+for name in catfields:
+    labels = cat_data[name].astype('category').cat.categories.tolist()
+    replace_map_comp = {name : {k: v for k,v in zip(labels,list(range(1,len(labels)+1)))}}
+    cat_dataReplace.replace(replace_map_comp, inplace=True)
+    replace_map_comp_dict[name] = replace_map_comp
+
+#export categorical data encoded to csv
+##expTableToExcel(cat_dataReplace, 'Encoded categorical data')
+##print(cat_dataReplace)
+#print dictionary
+##for key , value in replace_map_comp_dict.items():
+##   print(value)
+#merge encoded categorical with numerical
+df_merged = pd.concat([cat_dataReplace, num_data],axis=1)
+##expTableToExcel(df_merged, 'merged encoded cat num')
+#print graphs
+OptionList = [i for i in fields]
+
+'--------------------------------------------------------------------'
+server = flask.Flask(__name__)
+app = dash.Dash(__name__)
+app.layout = html.Div([
+    html.Div([dcc.Graph(id='dist-plot', animate=True)]),
+    html.Div([
+        html.Label(["Select X variable:",
+                    dcc.Dropdown(id='xaxis-dist', options=[{'label': i, 'value': i} for i in fields],
+                                 multi=False,
+                                 placeholder="Select an option for X"
+                                 )]),
+
+    ])
+])
+
+
+@app.callback(Output("dist-plot", "figure"), [Input('xaxis-dist', "value"),
+                                              ])
+def make_figure(x):
+    if x is None:
+        return dash.no_update
+    return px.histogram(df, x=df_merged[x], histnorm='probability',color="subject",barmode="overlay",
+                        hover_data=df_merged.columns,
+                        ).update_xaxes(showgrid=True, title=x, autorange=True,
+                                       categoryorder='total ascending'
+                                       ).update_yaxes(title=' ', showgrid=True,
+                                                      autorange=True).update_layout(
+        clickmode='event+select', hovermode='closest', autosize=True
+    ).update_traces(marker=dict(opacity=0.7, line=dict(width=0.5, color='DarkSlateGrey'),
+                                ))
+
+
+app.run_server(debug=True)
+
