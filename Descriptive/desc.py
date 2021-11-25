@@ -43,13 +43,8 @@ for x in df_mat.dtypes.index:
     #print()
     
 # Checking for duplicated values
-for item in df_mat.duplicated():
-    if (item == True):
-        print(item)
-        
-for item in df_por.duplicated():
-    if (item == True):
-        print(item)
+print("Math duplicated values count: ", df_mat.duplicated().sum())     
+print("Port duplicated values count: ", df_por.duplicated().sum())
    
 ## Dividing Attributes
 
@@ -68,7 +63,7 @@ for col in nocat_col:
 mult_val_col = [x for x in nocat_col 
                 if x not in some_val_col]        
 
-"""   
+   
 ## Exploratory Analysis (without normalize)
 
 # Categorical Attributes Plots
@@ -249,8 +244,6 @@ for col in mult_val_col:
                  , stat = 'density', alpha = 0.5).set(ylabel = "frequency")
     axes.legend(['Mat', 'Port'])
     plt.savefig(name_com)
-"""
-
   
 ## Merging Dataset
 
