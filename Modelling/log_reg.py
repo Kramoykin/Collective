@@ -299,7 +299,7 @@ print("\nFeature coefficients : \n", feature_coeffs)
 # Classification Report
 print(classification_report(y_valid, y_pred_valid))
 # Accuracy on Valid
-print("\nThe Model validation accuracy is : ", log_reg.score(X_valid, y_valid))
+print("\nThe Model validation accuracy is : ", accuracy_score(y_valid, y_pred_valid))
 # Logarithmic Loss on Valid
 print("\nThe Model Log Loss of Validating :", log_loss(y_valid, proba_valid))
 
@@ -336,7 +336,11 @@ print('\nTreshold Adjustment: \n', df_tresh)
 best_tresh = df_tresh.iloc[0][0]
 print('\nThe best treshold value is : \n', best_tresh)
 y_pred = np.where(proba_valid[:, 1] > best_tresh, 1, 0)
+print('\nAccuracy after adjustment : ', accuracy_score(y_valid, y_pred))
+
+# CM after adjustment
 cm = confusion_matrix(y_valid, y_pred)
+cm_norm = cm / cm.sum(axis = 1).reshape(-1, 1)
 print("\nConfusion Matrix after treshold adjustment: \n", cm)
 plot_confusion_matrix(cm_norm, classes = log_reg.classes_)
 
