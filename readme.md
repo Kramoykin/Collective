@@ -47,12 +47,10 @@ Also on the descriptive stage was implemented the ability to construct correlati
 
 ## Predictive analysis
 
-### Logistic regression model
+### Logistic Regression model
 
 <p align="justify">
 For the following analysis both Math and Portuguese datasets were merged with removing duplicated rows, appropriate for students attending both courses. For proper using of the logistic regression the target variable (final grade - G3) should have been transformed. On the following picture
-</p>
-
 <p align="center">
   <img src="https://user-images.githubusercontent.com/63719570/140011262-2362d045-911c-4170-a075-53e63b346d24.png" />
 </p>
@@ -66,11 +64,24 @@ Finally the **sklearn.LogisticRegression** model with the best value of C-parame
 </p>
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/63719570/140012350-c621d27e-24c8-4cc5-9ad3-95034f489590.png" />
+  <img src="https://user-images.githubusercontent.com/63719570/144796048-d251ba7e-d273-4049-bdad-85425333a0ed.png" />
 </p>
 
 <p align="justify">
-  
+Efficiency of Logistic Regression application was also estimated by using ROC/AUC metric:   
+</p>
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/63719570/144796415-d0d7920e-64bd-4abc-a47d-50888f042b5a.png" />
+</p>
+
+<p align="justify">
+During the roc/auc exploration it was calculated list of treshold values for Logistic Regression Classification. It was implemented the treshold adjustment by the accuracy value corresponding to certain trehold value. The confusion matrix after adjustment is represented below:
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/63719570/144796954-76a9ccff-444d-44e7-9c5d-f012f0e3231a.png" />
+</p>
+but accuracy value is still the same -- 0.92.
+<p align="justify">  
 With the aim of verifying the model there was used __sklearn.DummyClassifier__ which results of accuracy is 0.71 and of logarithmic loss is 9.87 are much worse.
 
 Also it was used some **SHAP** functional for describing the resulting feature importance of used attributes:
@@ -78,6 +89,26 @@ Also it was used some **SHAP** functional for describing the resulting feature i
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/63719570/140012756-02a56362-e21a-402f-9340-d028edd99009.png" />
+</p>
+
+### Random Forest model
+
+It was also created Random Forrest classification model for student's academic performance. All the data preparation, features engineering and creating train/test/valid  samplings operations were the same. The Random Forest model with the parameters n_estimators == 100 and criterion == 'entropy' was fitted on the train data. Testing accuracy value on validation was 0.88 with the following confusion matrix:
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/63719570/144799510-c4607d16-8761-4505-a72f-ffe4d66252e1.png" />
+</p>
+
+After that it was implemented max_features and max_depth hyperparameters tuning algorithm. Efficiency of the tuning was explored by the confusion matricies and accuracy values. It was founded that the best results were given by default hyperparameter values.  
+
+The roc/auc analysis gave the following results:
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/63719570/144799699-befa5a18-313d-4f0b-b6cc-bc72e5900e86.png" />
+</p>
+
+Treshold value was adjusted by the same algorithm as it was for Logistic Regression. The accuracy value on the validation set is 0.91 and confusion matrix:
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/63719570/144817002-a420c286-6f2d-4f41-b670-0748fc304e5f.png" />
 </p>
 
 ## Useful Links:
