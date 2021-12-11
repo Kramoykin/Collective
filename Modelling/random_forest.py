@@ -22,15 +22,8 @@ warnings.filterwarnings('ignore')
 import Modelling.general_func as gf
 from itertools import product
 
-def Main(path): 
-
-    """-----------LOAD DATASET-----------"""
-    
-    df_com = path
-    
-    X_train, X_valid, y_train, y_valid, X_test, y_test = gf.get_Test_data(df_com)
-    
-    
+def main(X_train, X_valid, y_train, y_valid, X_test, y_test): 
+   
     """---------------Fitting the model without tuning----------------------"""
     rf = RandomForestClassifier(n_estimators=100, criterion='entropy')
     rf.fit(X_train, y_train)

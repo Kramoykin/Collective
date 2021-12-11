@@ -6,6 +6,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
+import pathlib
+from pathlib import Path
 from sklearn.metrics import accuracy_score
 from itertools import product
 import pandas as pd
@@ -71,7 +73,7 @@ def get_Test_data(df_com):
                                                            , test_size = 0.1
                                                            , random_state = 13
                                                            )
-    return X_train, X_valid, y_train, y_valid, X_test, y_test
+    return X_train, X_valid, y_train, y_valid, X_test, y_test, features
 
 def tune_forest(X_train, y_train, X_test, y_test):
     """ 
@@ -343,9 +345,9 @@ def print_stat(df):
                                                         , df.isnull().sum()))
     
     print("\nNumber of duplicated values in the {} dataframe: {}".format(df.name
-                                                , df_mat.duplicated().sum()))
+                                                , df.duplicated().sum()))
     f.write("\nNumber of duplicated values in the {} dataframe: {}\n".format(df.name
-                                                , df_mat.duplicated().sum()))
+                                                , df.duplicated().sum()))
     f.close()
 
 def get_cat(df):
@@ -377,9 +379,9 @@ def plot_hist(df_mat, df_por):
     
     # Categorical Attributes Plots
     for col in df_mat:
-        name_mat = "./pic/" + str(col) + "_mat" + ".png"
-        name_por = "./pic/" + str(col) + "_por" + ".png"
-        name_com = "./pic/" + str(col) + "_com" + ".png"
+        name_mat = Path(pathlib.Path.cwd(),'Descriptive','pic',str(col)+"_mat")
+        name_por = Path(pathlib.Path.cwd(),'Descriptive','pic',str(col)+"_por")
+        name_com = Path(pathlib.Path.cwd(),'Descriptive','pic',str(col)+"_com")
         # Plot mat
         plt.figure(figsize = (5, 5))
         sns.countplot(df_mat[col]).set(title = "Mat")
@@ -431,9 +433,9 @@ def plot_hist_norm(df_mat, df_por):
         per_mat = lambda i: len(i) / (len(x_mat)) 
         per_por = lambda j: len(j) / (len(x_por))
         # Plots names
-        name_mat = "./pic/" + str(col) + "_mat_norm" + ".png"
-        name_por = "./pic/" + str(col) + "_por_norm" + ".png"
-        name_com = "./pic/" + str(col) + "_com_norm" + ".png"
+        name_mat = Path(pathlib.Path.cwd(),'Descriptive','pic',str(col)+"_mat")
+        name_por = Path(pathlib.Path.cwd(),'Descriptive','pic',str(col)+"_por")
+        name_com = Path(pathlib.Path.cwd(),'Descriptive','pic',str(col)+"_com")
         # Plot mat
         plt.figure(figsize = (6, 6))
         sns.barplot(df_por[col], x = x_por, y = x_por\
@@ -458,9 +460,9 @@ def plot_cor_mat(df):
     Plots correlation matrix for all features of dataframe
         Input: df - input dataframe
     """
-    name = './pic/corr_' + df.name + '.png'
+    name = Path(pathlib.Path.cwd(),'Descriptive','pic','corr_'+df.name)
     corr_mat = df.corr()
-    plt.figure(figsize = (20, 5))
+    # plt.figure(figsize = (20, 5))
     sns.heatmap(corr_mat, annot = True, cmap = 'coolwarm' )
     plt.savefig(name)
     

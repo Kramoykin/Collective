@@ -14,65 +14,7 @@ Created on Wed Dec  1 12:16:09 2021
 @author: deutero
 """
 
-def main(path):
-    """-----------LOAD DATASET-----------"""
-    
-    df_com = pd.read_csv(path)
-    
-    """-----------DATA PREPARATION-----------"""
-    
-    # Get the list of categorical variables
-    cat_rows = fnc.get_cat(df_com)
-    
-    # Transform categorical variables to the numeric format
-    new_df_com = pd.get_dummies(df_com, columns = cat_rows)
-    
-    
-    # Check where the border between good and bad students placed 
-    #(<=9 - bad, >9 - good)
-    fig, ax = plt.subplots(1,2, sharey = True)
-    sns.countplot(new_df_com.loc[new_df_com['G3'] <= 9.0]['G3'], ax = ax[0])
-    sns.countplot(new_df_com.loc[new_df_com['G3'] > 9.0]['G3'], ax = ax[1])
-    fig.suptitle("The final grade distribution", fontsize=14)
-    
-    # Transform target variable to binary variable
-    new_df_com = fnc.make_tar_bin(new_df_com, 9)
-    
-    """--------------FEATURES EXPLORATION-------------"""
-    
-    # Get the feature importance
-    df_fi = fnc.get_fi(new_df_com, 'G3')
-    features = df_fi['Feature'].values
-    print('Features/n',features)
-    
-    """--------------SPLITTING THE DATA----------------"""
-    
-    # Split the data into X & y
-    X = new_df_com[features].values
-    y = new_df_com['G3']
-    y = y.astype(int)
-    
-    # Hold-out validation
-    # the first one (for training the model)
-    X_train, X_test, y_train, y_test = train_test_split(X
-                                                      , y
-                                                      , train_size = 0.8
-                                                      , test_size = 0.2
-                                                      , random_state = 13
-                                                      )
-    # the second one (will be used after hyperparameter tuning)
-    X_train, X_valid, y_train, y_valid = train_test_split(X_train
-                                                        , y_train
-                                                        , train_size = 0.9
-                                                        , test_size = 0.1
-                                                        , random_state = 13
-                                                        )
-    
-    # G3 distribution in validation sample plot
-    # plt.figure()
-    # sns.histplot(y_valid, bins = 20, color = 'deeppink'\
-    #               , label = "G3 distr for both groups"\
-    #               , alpha = 0.5).set(ylabel = "frequency")
+def main(X_train, X_valid, y_train, y_valid, X_test, y_test, features):
     
     """--------------HYPER PARAMETER TUNING----------------"""
     # Get the sorted C-values dataframe
