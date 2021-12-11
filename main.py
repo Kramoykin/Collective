@@ -14,8 +14,8 @@ pathm = Path(pathlib.Path.cwd(),'Descriptive','student-mat.csv')
 pathp = Path(pathlib.Path.cwd(),'Descriptive','studen-por.csv')
 desc.main(pathm, pathp)
 
-pathCC = Path(pathlib.Path.cwd(),'Descriptive','common_clear.csv')
 
+pathCC = Path(pathlib.Path.cwd(),'Descriptive','common_clear.csv')
 """----------------Logistic Regression-------------------------"""
 
 log_reg_main.main(pathCC)
