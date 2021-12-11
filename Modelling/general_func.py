@@ -1,4 +1,13 @@
 # Import modules
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import r2_score
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import accuracy_score
+from itertools import product
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -10,6 +19,94 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import log_loss
 import warnings
 warnings.filterwarnings('ignore')
+
+def get_Test_data(df_com):
+    
+    """-----------DATA PREPARATION-----------"""
+    
+    # Get the list of categorical variables
+    cat_rows = get_cat(df_com)
+    
+    # Transform categorical variables to the numeric format
+    new_df_com = pd.get_dummies(df_com, columns = cat_rows)
+    
+    
+    # Check where the border between good and bad students placed 
+    #(<=9 - bad, >9 - good)
+    fig, ax = plt.subplots(1,2, sharey = True)
+    sns.countplot(new_df_com.loc[new_df_com['G3'] <= 9.0]['G3'], ax = ax[0])
+    sns.countplot(new_df_com.loc[new_df_com['G3'] > 9.0]['G3'], ax = ax[1])
+    fig.suptitle("The final grade distribution", fontsize=14)
+    
+    # Transform target variable to binary variable
+    new_df_com = make_tar_bin(new_df_com, 9)
+    print(new_df_com)
+    
+    """--------------FEATURES EXPLORATION-------------"""
+    
+    # Get the feature importance
+    df_fi = get_fi(new_df_com, 'G3')
+    features = df_fi['Feature'].values
+    print(features)
+    
+    """--------------SPLITTING THE DATA----------------"""
+    
+    # Split the data into X & y
+    X = new_df_com[features].values
+    y = new_df_com['G3']
+    y = y.astype(int)
+    
+    # Hold-out validation
+    # the first one (for training the model)
+    X_train, X_test, y_train, y_test = train_test_split(X
+                                                           , y
+                                                           , train_size = 0.8
+                                                           , test_size = 0.2
+                                                           , random_state = 13
+                                                           )
+    # the second one (will be used after hyperparameter tuning)
+    X_train, X_valid, y_train, y_valid = train_test_split(X_train
+                                                           , y_train
+                                                           , train_size = 0.9
+                                                           , test_size = 0.1
+                                                           , random_state = 13
+                                                           )
+    return X_train, X_valid, y_train, y_valid, X_test, y_test
+
+def tune_forest(X_train, y_train, X_test, y_test):
+    """ 
+    Tuning max_features and max_depth hyperparameters using accuracy score
+    and confusion matrix for each combination of parameter values.
+        Input: X_train, X_test - predictors dataframes from train and test samples
+               y_train, y_test - target arrays from train and test samples
+        Output: Nothing. Just prints accuracy scores and plots confusion matrices.
+    """
+    # Tunning Random Forest
+    n_estimators = 100
+    max_features = [1, 'sqrt', 'log2']
+    max_depths = [None, 2, 3, 4, 5]
+    # with product we can iterate through all possible combinations
+    for f, d in product(max_features, max_depths): 
+        # Create model with parameters combination
+        rf = RandomForestClassifier(n_estimators=n_estimators, 
+                                    criterion='entropy', 
+                                    max_features=f, 
+                                    max_depth=d, 
+                                    n_jobs=2,
+                                    random_state=1337)
+        # Fit the model
+        rf.fit(X_train, y_train)
+        # Predict values 
+        prediction_test = rf.predict(X=X_test)
+        #Print accuracy score
+        print('Classification accuracy on test set with max features = {} and max_depth = {}: {:.3f}'.format(f, d, accuracy_score(y_test,prediction_test)))
+        # Plot confusion matrix
+        cm = confusion_matrix(y_test, prediction_test)
+        cm_norm = cm/cm.sum(axis=1)[:, np.newaxis]
+        plt.figure()
+        plot_confusion_matrix(cm_norm, classes=rf.classes_
+                              ,title='Confusion matrix accuracy on test set with max features = {} and max_depth = {}: {:.3f}'.format(f, d, accuracy_score(y_test,prediction_test)))
+
 
 def get_cat(df):
     """ 
@@ -213,6 +310,200 @@ def adjust_treshold(tresholds, y_valid, proba_valid):
     return df
 
 
+def print_stat(df):
+    """
+    Prints dataframe description and some statistics
+    , duplicate output to a file.
+        Input: df - dataframe
+    """
+    f = open("stat.txt", "w")
+    
+    print("\nHead of the {} dataframe: \n{}".format(df.name, df.head()))
+    f.write("\nHead of the {} dataframe: \n{}\n".format(df.name, df.head()))
+    
+    print("\nDescription of the {} dataframe: \n{}".format(df.name
+                                                         , df.describe()))
+    f.write("\nDescription of the {} dataframe: \n{}\n".format(df.name
+                                                         , df.describe()))
+
+    print("\nData types of the {} dataframe:".format(df.name))
+    f.write("\nData types of the {} dataframe:\n".format(df.name))
+    
+    print(df.info())
+    df.info(buf = f)
+
+    print("\nUnique values in the {} dataframe: \n{}".format(df.name
+                                , df.apply(lambda x: len(x.unique()))))
+    f.write("\nUnique values in the {} dataframe: \n{}\n".format(df.name
+                                , df.apply(lambda x: len(x.unique()))))
+    
+    print("\nChecking null values in the {} dataframe: \n{}".format(df.name
+                                                        , df.isnull().sum()))
+    f.write("\nChecking null values in the {} dataframe: \n{}\n".format(df.name
+                                                        , df.isnull().sum()))
+    
+    print("\nNumber of duplicated values in the {} dataframe: {}".format(df.name
+                                                , df_mat.duplicated().sum()))
+    f.write("\nNumber of duplicated values in the {} dataframe: {}\n".format(df.name
+                                                , df_mat.duplicated().sum()))
+    f.close()
+
+def get_cat(df):
+    """ 
+    Get from the df the list of categorical variables.
+        Input : df - dataframe
+        Output : cat_col - list of categorical variables names 
+    """
+    cat_col = []
+    for x in df.dtypes.index:
+        if df.dtypes[x] == 'object':
+            cat_col.append(x)
+    return cat_col
+
+import matplotlib.pylab as pylab
+def plot_hist(df_mat, df_por):
+    """ 
+    Plots unnormalized countplots for each parameter of a dataframes separately
+    and common plot for both dataframes.
+        Input: df_mat - math dataframe
+               df_por - por dataframe
+    """
+    # Setting lebels font for prevent sticking
+    params = {
+         'axes.labelsize': 'small',
+         'axes.titlesize':'small'
+         }
+    pylab.rcParams.update(params)
+    
+    # Categorical Attributes Plots
+    for col in df_mat:
+        name_mat = "./pic/" + str(col) + "_mat" + ".png"
+        name_por = "./pic/" + str(col) + "_por" + ".png"
+        name_com = "./pic/" + str(col) + "_com" + ".png"
+        # Plot mat
+        plt.figure(figsize = (5, 5))
+        sns.countplot(df_mat[col]).set(title = "Mat")
+        plt.savefig(name_mat)
+        # Plot por
+        plt.figure(figsize = (5, 5))
+        sns.countplot(df_por[col]).set(title = "Por")
+        plt.savefig(name_por)
+        # Plot both
+        plt.figure(figsize = (12, 6))
+        fig, ax = plt.subplots(1,2, sharey = True)
+        sns.countplot(df_mat[col], ax = ax[0]).set(title = "Mat")
+        sns.countplot(df_por[col], ax = ax[1]).set(title = "Por")
+        plt.savefig(name_com)
+
+from sklearn.preprocessing import LabelEncoder
+def encode_cat(df_mat,df_por, cat_col):
+    """
+    Encodes categorical attributes in dataframe to a numeric format.
+        Input: df_mat - math dataframe
+               df_por - por dataframe 
+               cat_col - list of categorical attributes columns name
+        Output: df_mat, df_por
+    """
+    le = LabelEncoder()
+    for col in cat_col:
+        df_mat[col] = le.fit_transform(df_mat[col])
+        df_por[col] = le.fit_transform(df_por[col])
+    return df_mat, df_por
+        
+def plot_hist_norm(df_mat, df_por):
+    """ 
+    Plots normalized countplots for each parameter of a dataframes separately
+    and common plot for both dataframes Can be used only after label encoding.
+        Input: df_mat - math dataframe
+               df_por - por dataframe
+    """
+    # Setting lebels font for prevent sticking
+    params = {
+         'axes.labelsize': 'small',
+         'axes.titlesize':'small'
+         }
+    pylab.rcParams.update(params)
+    # With normalize
+    for col in df_mat:
+        # Normalization stuff
+        x_mat = df_mat[col]
+        x_por = df_por[col]
+        per_mat = lambda i: len(i) / (len(x_mat)) 
+        per_por = lambda j: len(j) / (len(x_por))
+        # Plots names
+        name_mat = "./pic/" + str(col) + "_mat_norm" + ".png"
+        name_por = "./pic/" + str(col) + "_por_norm" + ".png"
+        name_com = "./pic/" + str(col) + "_com_norm" + ".png"
+        # Plot mat
+        plt.figure(figsize = (6, 6))
+        sns.barplot(df_por[col], x = x_por, y = x_por\
+                    , estimator = per_por).set(ylabel = "percent", title = "Mat")
+        plt.savefig(name_mat)
+        # Plot por
+        plt.figure(figsize = (6, 6))
+        sns.barplot(df_mat[col], x = x_mat, y = x_mat\
+                    , estimator = per_mat).set(ylabel = "percent", title = "Por")
+        plt.savefig(name_por)
+        # Plot both
+        plt.figure(figsize = (6, 6))
+        fig, ax = plt.subplots(1,2, sharey = True)
+        sns.barplot(df_mat[col], x = x_mat, y = x_mat, estimator = per_mat\
+                    , ax = ax[0]).set(ylabel = "percent", title = "Mat")
+        sns.barplot(df_por[col], x = x_por, y = x_por, estimator = per_por\
+                    , ax = ax[1]).set(ylabel = "percent", title = "Por")
+        plt.savefig(name_com)
+        
+def plot_cor_mat(df):
+    """ 
+    Plots correlation matrix for all features of dataframe
+        Input: df - input dataframe
+    """
+    name = './pic/corr_' + df.name + '.png'
+    corr_mat = df.corr()
+    plt.figure(figsize = (20, 5))
+    sns.heatmap(corr_mat, annot = True, cmap = 'coolwarm' )
+    plt.savefig(name)
+    
+def merge_df(df_mat, df_por):
+    """
+    Merges two dataframes excluding duplicating rows from the biggest one.
+    Input: df_mat - math dataframe
+               df_por - por dataframe 
+               cat_col - list of categorical attributes columns name
+        Output: df_mat, df_por
+    """
+    # Add indexes
+    df_por['ID'] = np.arange(df_por.shape[0])
+    
+    # Add course attribute (if port - 1, if math  - 0)
+    add_por = [int(1)] * len(df_por)
+    add_mat = [int(0)] * len(df_mat)
+    df_por["is_por"] = add_por
+    df_mat["is_por"] = add_mat
+    
+    # Create copies for dropping course individual columns
+    df_mat_copy = df_mat.copy()
+    df_por_copy = df_por.copy()
+    
+    # Delete course individual columns
+    for df in [df_mat_copy, df_por_copy]:
+        del df["G1"]
+        del df["G2"]
+        del df["G3"]
+        del df["is_por"]
+        del df["paid"]
+    
+    # Get ID of duplicated rows
+    merged_df = df_mat_copy.merge(df_por_copy, how = 'inner')
+    del_rows = merged_df['ID']
+    
+    # Drop duplicated rows from Portuguese
+    df_por.drop(del_rows, inplace = True)
+    
+    # Combine two datasets and output clear common df 
+    df_por.drop(columns = ['ID'], inplace = True)
+    df_common_clear = df_por.append(df_mat)
+    df_common_clear.to_csv('common_clear.csv', index = None)
 
  
 

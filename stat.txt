@@ -1,0 +1,139 @@
+
+Head of the por dataframe: 
+  school sex  age address famsize Pstatus  ...  Walc  health absences  G1  G2  G3
+0     GP   F   18       U     GT3       A  ...     1       3        4   0  11  11
+1     GP   F   17       U     GT3       T  ...     1       3        2   9  11  11
+2     GP   F   15       U     LE3       T  ...     3       3        6  12  13  12
+3     GP   F   15       U     GT3       T  ...     1       5        0  14  14  14
+4     GP   F   16       U     GT3       T  ...     2       5        0  11  13  13
+
+[5 rows x 33 columns]
+
+Description of the por dataframe: 
+              age        Medu        Fedu  ...          G1          G2          G3
+count  649.000000  649.000000  649.000000  ...  649.000000  649.000000  649.000000
+mean    16.744222    2.514638    2.306626  ...   11.399076   11.570108   11.906009
+std      1.218138    1.134552    1.099931  ...    2.745265    2.913639    3.230656
+min     15.000000    0.000000    0.000000  ...    0.000000    0.000000    0.000000
+25%     16.000000    2.000000    1.000000  ...   10.000000   10.000000   10.000000
+50%     17.000000    2.000000    2.000000  ...   11.000000   11.000000   12.000000
+75%     18.000000    4.000000    3.000000  ...   13.000000   13.000000   14.000000
+max     22.000000    4.000000    4.000000  ...   19.000000   19.000000   19.000000
+
+[8 rows x 16 columns]
+
+Data types of the por dataframe:
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 649 entries, 0 to 648
+Data columns (total 33 columns):
+ #   Column      Non-Null Count  Dtype 
+---  ------      --------------  ----- 
+ 0   school      649 non-null    object
+ 1   sex         649 non-null    object
+ 2   age         649 non-null    int64 
+ 3   address     649 non-null    object
+ 4   famsize     649 non-null    object
+ 5   Pstatus     649 non-null    object
+ 6   Medu        649 non-null    int64 
+ 7   Fedu        649 non-null    int64 
+ 8   Mjob        649 non-null    object
+ 9   Fjob        649 non-null    object
+ 10  reason      649 non-null    object
+ 11  guardian    649 non-null    object
+ 12  traveltime  649 non-null    int64 
+ 13  studytime   649 non-null    int64 
+ 14  failures    649 non-null    int64 
+ 15  schoolsup   649 non-null    object
+ 16  famsup      649 non-null    object
+ 17  paid        649 non-null    object
+ 18  activities  649 non-null    object
+ 19  nursery     649 non-null    object
+ 20  higher      649 non-null    object
+ 21  internet    649 non-null    object
+ 22  romantic    649 non-null    object
+ 23  famrel      649 non-null    int64 
+ 24  freetime    649 non-null    int64 
+ 25  goout       649 non-null    int64 
+ 26  Dalc        649 non-null    int64 
+ 27  Walc        649 non-null    int64 
+ 28  health      649 non-null    int64 
+ 29  absences    649 non-null    int64 
+ 30  G1          649 non-null    int64 
+ 31  G2          649 non-null    int64 
+ 32  G3          649 non-null    int64 
+dtypes: int64(16), object(17)
+memory usage: 167.4+ KB
+
+Unique values in the por dataframe: 
+school         2
+sex            2
+age            8
+address        2
+famsize        2
+Pstatus        2
+Medu           5
+Fedu           5
+Mjob           5
+Fjob           5
+reason         4
+guardian       3
+traveltime     4
+studytime      4
+failures       4
+schoolsup      2
+famsup         2
+paid           2
+activities     2
+nursery        2
+higher         2
+internet       2
+romantic       2
+famrel         5
+freetime       5
+goout          5
+Dalc           5
+Walc           5
+health         5
+absences      24
+G1            17
+G2            16
+G3            17
+dtype: int64
+
+Checking null values in the por dataframe: 
+school        0
+sex           0
+age           0
+address       0
+famsize       0
+Pstatus       0
+Medu          0
+Fedu          0
+Mjob          0
+Fjob          0
+reason        0
+guardian      0
+traveltime    0
+studytime     0
+failures      0
+schoolsup     0
+famsup        0
+paid          0
+activities    0
+nursery       0
+higher        0
+internet      0
+romantic      0
+famrel        0
+freetime      0
+goout         0
+Dalc          0
+Walc          0
+health        0
+absences      0
+G1            0
+G2            0
+G3            0
+dtype: int64
+
+Number of duplicated values in the por dataframe: 0
