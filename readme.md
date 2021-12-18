@@ -6,6 +6,19 @@ This is the repo of Tomsk Politechnic University students course work on the fie
 The goal of this work is to go through such data analysis steps as **data preparation**, **descriptive** and **explanatory** statistics and finally – **predictive analysis** with using several predive models. 
 </p>
 
+# Introduction
+<p align="justify">
+As part of the study of the subject "Introduction to Big Data Analysis", the influence of various social, psychological, and property factors on students' academic performance was investigated. The study was conducted based on data [] using statistical methods and machine learning algorithms.
+The work aimed to acquire knowledge and skills of working with data using statistical analysis and the Python programming language with NumPy, Pandas, sklearn data processing libraries
+The study **aims** to quantify the relationship between the influence of various factors on student academic performance.
+To achieve the goal, the following **tasks** were defined:
+1.  To describe the data under study statistically and graphically to obtain detailed information about the object of study
+2. To carry out the stage of data preparation for further analysis
+3. Identify the relationships between the parameters and select the most significant
+4.  Perform predictive analysis based on the prepared data using Logistic Regression and Random Forest algorithms
+5.  Evaluate the results of predictive analysis using accuracy metrics and ROC-AUC estimates.
+</p>
+
 ## Data preparation and descriptive analysis
 <p align="justify">
   
@@ -109,6 +122,14 @@ Treshold value was adjusted by the same algorithm as it was for Logistic Regress
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/63719570/144817002-a420c286-6f2d-4f41-b670-0748fc304e5f.png" />
+</p>
+
+# Conclusion
+<p align="justify">
+As a result of the study, a statistical description of the data [] and a set of graphs and histograms reflecting the features of the distribution and interrelation of parameters were obtained.
+After preparing the data and combining datasets through the calculation of entropy on binary trees, the parameters that most affect students' academic performance were selected. Using the selected parameters as predictors, a predictive analysis was carried out using algorithms of Logistic Regression and Random Forest.
+The evaluation of the results of the models was carried out based on accuracy criteria and ROC-AUC score. The accuracy values were 0.92 for Logistic Regression and 0.91 for the random forest. The AUC score showed values of 0.979 for Logistic Regression and 0.957 for Random Forest.
+Based on the estimates obtained, it can be concluded that the effectiveness of the models for the selected data differs slightly. The sufficiently high accuracy of the predictions obtained shows that the selected parameters largely determine the academic performance of students.
 </p>
 
 ## Useful Links:
