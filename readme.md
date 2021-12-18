@@ -11,13 +11,13 @@ The goal of this work is to go through such data analysis steps as **data prepar
 As part of the study of the subject "Introduction to Big Data Analysis", the influence of various social, psychological, and property factors on students' academic performance was investigated. The study was conducted based on data [] using statistical methods and machine learning algorithms.
 The work aimed to acquire knowledge and skills of working with data using statistical analysis and the Python programming language with NumPy, Pandas, sklearn data processing libraries
 The study **aims** to quantify the relationship between the influence of various factors on student academic performance.
-To achieve the goal, the following **tasks** were defined:
-1.  To describe the data under study statistically and graphically to obtain detailed information about the object of study
-2. To carry out the stage of data preparation for further analysis
-3. Identify the relationships between the parameters and select the most significant
-4.  Perform predictive analysis based on the prepared data using Logistic Regression and Random Forest algorithms
-5.  Evaluate the results of predictive analysis using accuracy metrics and ROC-AUC estimates.
 </p>
+
+* To describe the data under study statistically and graphically to obtain detailed information about the object of study
+* To carry out the stage of data preparation for further analysis
+* Identify the relationships between the parameters and select the most significant
+* Perform predictive analysis based on the prepared data using Logistic Regression and Random Forest algorithms
+* Evaluate the results of predictive analysis using accuracy metrics and ROC-AUC estimates.
 
 ## Data preparation and descriptive analysis
 <p align="justify">
